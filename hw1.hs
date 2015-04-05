@@ -87,7 +87,9 @@ toInt nat = case nat of
 --   >>> add two three == add three two
 --   True
 add :: Nat -> Nat -> Nat
-add lhs rhs = undefined
+add lhs rhs = case lhs of
+              Zero -> rhs
+              _ -> Succ (add (pred lhs) rhs)
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -104,8 +106,11 @@ add lhs rhs = undefined
 --
 --   >>> sub one three
 --   Zero
---
-sub = undefined
+sub :: Nat -> Nat -> Nat
+sub lhs rhs = if (gt rhs lhs) then Zero
+              else case rhs of
+                   Zero -> lhs
+                   _ -> sub (pred lhs) (pred rhs)
 
 
 -- | Is the left value greater than the right?
@@ -135,8 +140,12 @@ gt lhs rhs = (toInt lhs) > (toInt rhs)
 --
 --   >>> toInt (mult three three)
 --   9
---
-mult = undefined
+mult :: Nat -> Nat -> Nat
+mult _ Zero = Zero
+mult Zero _ = Zero
+mult lhs rhs = case rhs of
+               Zero -> add lhs lhs
+               _ -> mult lhs (pred rhs)
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -149,8 +158,8 @@ mult = undefined
 --
 --   >>> toInt (sum [one,two,three])
 --   6
---
-sum = undefined
+sum :: [Nat] -> Nat
+sum nums = foldr (add) zero nums
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -160,8 +169,11 @@ sum = undefined
 --
 --   >>> toInt (sum (take 100 odds))
 --   10000
---
-odds = undefined
+nats :: [Nat]
+nats = Zero : map (\x -> add x one) nats
+
+odds :: [Nat]
+odds = filter (\x -> odd (toInt x)) nats
 
 
 
