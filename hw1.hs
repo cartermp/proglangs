@@ -1,6 +1,7 @@
 module HW1 where
 
 import Prelude hiding (Enum(..), sum)
+import Data.List
 
 
 --
@@ -140,12 +141,16 @@ gt lhs rhs = (toInt lhs) > (toInt rhs)
 --
 --   >>> toInt (mult three three)
 --   9
+multInner :: Nat -> Nat -> Nat
+multInner lhs rhs = case rhs of
+                    Zero -> add lhs Zero
+                    _ -> add lhs (multInner lhs (pred rhs))
+
 mult :: Nat -> Nat -> Nat
 mult _ Zero = Zero
 mult Zero _ = Zero
-mult lhs rhs = case rhs of
-               Zero -> add lhs lhs
-               _ -> mult lhs (pred rhs)
+mult lhs rhs = if (lhs == Zero || rhs == Zero) then Zero
+               else multInner lhs rhs
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -191,13 +196,18 @@ odds = filter (\x -> odd (toInt x)) nats
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 --
 compress :: Eq a => [a] -> [(Int,a)]
-compress = undefined
+compress = map (\lst -> (length lst, head lst)) . group
 
 
 -- | Convert a run-length list back into a regular list.
 --
 --   >>> decompress [(5,'a'),(3,'b'),(4,'c'),(1,'a'),(2,'b')]
 --   "aaaaabbbccccabb"
---  
+generate :: a -> [a]
+generate a = a : generate a
+
+expand :: (Int, a) -> [a]
+expand item = take (fst item) (generate (snd item))
+
 decompress :: [(Int,a)] -> [a]
-decompress = undefined
+decompress = concat . map (\x -> expand x)
