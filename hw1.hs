@@ -1,7 +1,7 @@
 module HW1 where
 
 import Prelude hiding (Enum(..), sum)
-import Data.List
+import Data.List hiding (sum)
 
 
 --
@@ -141,14 +141,14 @@ gt lhs rhs = (toInt lhs) > (toInt rhs)
 --
 --   >>> toInt (mult three three)
 --   9
+--   >>> mult two two == add four four
+--   True
 multInner :: Nat -> Nat -> Nat
-multInner lhs rhs = case rhs of
-                    Zero -> add lhs Zero
-                    _ -> add lhs (multInner lhs (pred rhs))
+multInner lhs rhs = case lhs of
+                    Zero -> Zero
+                    _ -> add (multInner (pred lhs) rhs) rhs
 
 mult :: Nat -> Nat -> Nat
-mult _ Zero = Zero
-mult Zero _ = Zero
 mult lhs rhs = if (lhs == Zero || rhs == Zero) then Zero
                else multInner lhs rhs
 
@@ -164,7 +164,8 @@ mult lhs rhs = if (lhs == Zero || rhs == Zero) then Zero
 --   >>> toInt (sum [one,two,three])
 --   6
 sum :: [Nat] -> Nat
-sum nums = foldr (add) zero nums
+sum [] = Zero
+sum items = foldr (add) zero items
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -194,7 +195,6 @@ odds = filter (\x -> odd (toInt x)) nats
 -- 
 --   >>> compress "Mississippi"
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
---
 compress :: Eq a => [a] -> [(Int,a)]
 compress = map (\lst -> (length lst, head lst)) . group
 
