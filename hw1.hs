@@ -125,7 +125,10 @@ sub lhs rhs = if (gt rhs lhs) then Zero
 --   >>> gt two two
 --   False
 gt :: Nat -> Nat -> Bool
-gt lhs rhs = (toInt lhs) > (toInt rhs)
+gt lhs rhs
+	| lhs == Zero = False
+	| rhs == Zero = True
+	| otherwise   = gt (pred lhs) (pred rhs)
 
 
 -- | Multiply two natural numbers.
