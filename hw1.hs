@@ -141,7 +141,7 @@ gt lhs rhs = (toInt lhs) > (toInt rhs)
 --
 --   >>> toInt (mult three three)
 --   9
---   >>> mult two two == add four four
+--   >>> mult four two == add four four
 --   True
 multInner :: Nat -> Nat -> Nat
 multInner lhs rhs = case lhs of
@@ -203,6 +203,9 @@ compress = map (\lst -> (length lst, head lst)) . group
 --
 --   >>> decompress [(5,'a'),(3,'b'),(4,'c'),(1,'a'),(2,'b')]
 --   "aaaaabbbccccabb"
+--
+--   >>> decompress (compress "Mississippi") == "Mississippi"
+--   True
 generate :: a -> [a]
 generate a = a : generate a
 
@@ -210,4 +213,4 @@ expand :: (Int, a) -> [a]
 expand item = take (fst item) (generate (snd item))
 
 decompress :: [(Int,a)] -> [a]
-decompress = concat . map (\x -> expand x)
+decompress = concatMap (\x -> expand x)
