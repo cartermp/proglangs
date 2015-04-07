@@ -3,6 +3,9 @@ module HW1 where
 import Prelude hiding (Enum(..), sum)
 import Data.List hiding (sum)
 
+-- | F#'s Pipe-Forward operator.
+(|>) :: a -> (a -> b) -> b
+(|>) f g = g f
 
 --
 -- * Part 1: Natural numbers
@@ -182,8 +185,7 @@ nats :: [Nat]
 nats = Zero : map (\x -> add x one) nats
 
 odds :: [Nat]
-odds = filter (\x -> odd (toInt x)) nats
-
+odds = nats |> filter (\x -> odd (toInt x))
 
 
 --
