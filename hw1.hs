@@ -7,6 +7,10 @@ import Data.List hiding (sum)
 (|>) :: a -> (a -> b) -> b
 (|>) f g = g f
 
+-- | F#'s composition operator.
+(>>) :: (a -> b) -> (b -> c) -> (a -> c)
+(>>) f g x = g(f x)
+
 --
 -- * Part 1: Natural numbers
 --
@@ -38,10 +42,10 @@ four = Succ three
 
 
 -- | The predecessor of a natural number.
---   
+--
 --   >>> pred zero
 --   Zero
---   
+--
 --   >>> pred three
 --   Succ (Succ Zero)
 pred :: Nat -> Nat
@@ -76,6 +80,18 @@ toInt nat = case nat of
             Zero -> 0
             _ -> 1 + toInt (pred nat)
 
+-- | Convert an integer into a natural number.
+--
+--   >>> fromInt 2
+--   Succ (Succ Zero)
+--
+--   >> fromInt 4 == four
+--   True
+fromInt :: Int -> Nat
+fromInt num
+        | num == 0 = head nats
+        | otherwise = nats !! num
+
 
 -- | Add two natural numbers.
 --
@@ -101,7 +117,7 @@ add lhs rhs = case lhs of
 --
 --   >>> sub two one
 --   Succ Zero
---   
+--
 --   >>> sub three one
 --   Succ (Succ Zero)
 --
@@ -163,15 +179,14 @@ mult lhs rhs = if (lhs == Zero || rhs == Zero) then Zero
 --
 --   >>> sum []
 --   Zero
---   
+--
 --   >>> sum [one,zero,two]
 --   Succ (Succ (Succ Zero))
 --
 --   >>> toInt (sum [one,two,three])
 --   6
 sum :: [Nat] -> Nat
-sum [] = Zero
-sum items = foldr (add) zero items
+sum = foldr (add) zero
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -197,7 +212,7 @@ odds = nats |> filter (\x -> odd (toInt x))
 --
 --   >>> compress [1,1,1,2,3,3,3,1,2,2,2,2]
 --   [(3,1),(1,2),(3,3),(1,1),(4,2)]
--- 
+--
 --   >>> compress "Mississippi"
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 compress :: Eq a => [a] -> [(Int,a)]
