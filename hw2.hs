@@ -94,3 +94,15 @@ bottomRightCorner = center ++ [Pen Down, bottomRightCornerPos]
 nix :: Cmd
 nix = Define "nix" ["x", "y", "w", "h"]
     (Commands (concat [topRightCorner, topLeftCorner, bottomLeftCorner, bottomRightCorner]))
+
+-- | 3. Define haskell function steps which produces a staircase from (0,0)
+--
+-- The gist here is to move up 1 and move right 1 n number of times.
+stepsImpl :: Int -> [Cmd]
+stepsImpl 0 = [Pen Up, Move (Num 0) (Num 0), Pen Down]
+stepsImpl n = (stepsImpl (n-1)) ++ [Move (Num 1) (Num 0), Move (Num 0) (Num 1)]
+
+steps :: Int -> Prog
+steps n = case n of
+          0 -> Commands [Pen Up, Move (Num 0) (Num 0)]
+          _ -> Commands (stepsImpl n)
