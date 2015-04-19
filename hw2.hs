@@ -33,7 +33,7 @@ data Cmd = Pen Mode
          | Call Macro [Expr]
     deriving (Eq, Show)
 
--- | 1. Draw a line from (x1,y1) to (x2,y2)
+-- | Draw a line from (x1,y1) to (x2,y2)
 --
 -- define line (x1, y1, x2, y2) {
 --     pen up; move(x1, y1);
@@ -49,7 +49,7 @@ line :: Cmd
 line = Define "line" ["x1", "y1", "x2", "y2"]
     (Commands [Pen Up, linePos1, Pen Down, linePos2])
 
--- | 2. Use line macro to define MiniLogo macro nix (x,y,w,h)
+-- | Use line macro to define MiniLogo macro nix (x,y,w,h)
 --
 -- define nix (x,y,w,h) {
 --    pen up; move(x,y);
@@ -95,7 +95,7 @@ nix :: Cmd
 nix = Define "nix" ["x", "y", "w", "h"]
     (Commands (concat [topRightCorner, topLeftCorner, bottomLeftCorner, bottomRightCorner]))
 
--- | 3. Define haskell function steps which produces a staircase from (0,0)
+-- | Define haskell function steps which produces a staircase from (0,0)
 --
 -- The gist here is to move up 1 and move right 1 n number of times.
 stepsImpl :: Int -> [Cmd]
@@ -106,3 +106,18 @@ steps :: Int -> Prog
 steps n = case n of
           0 -> Commands [Pen Up, Move (Num 0) (Num 0)]
           _ -> Commands (stepsImpl n)
+
+-- | Define Haskell function macros which returns a list of used macro names
+--
+-- Given a program, find the names of macros and return those as a list.
+-- Duplicates are not a concern; feel free to include them.
+isMacro :: Cmd -> Bool
+isMacro cmd = case cmd of
+              (Define _ _ _) -> True
+              _ -> False
+
+toMacro :: Cmd -> Macro
+toMacro (Define macroName _ _) = macroName
+
+macros :: [Cmd] -> [Macro]
+macros = map toMacro . filter isMacro
