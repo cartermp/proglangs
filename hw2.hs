@@ -33,6 +33,9 @@ data Cmd = Pen Mode
          | Call Macro [Expr]
     deriving (Eq, Show)
 
+(|>) :: a -> (a -> b) -> b
+(|>) f g = g f
+
 -- | Draw a line from (x1,y1) to (x2,y2)
 --
 -- define line (x1, y1, x2, y2) {
@@ -119,5 +122,11 @@ isMacro cmd = case cmd of
 toMacro :: Cmd -> Macro
 toMacro (Define macroName _ _) = macroName
 
-macros :: [Cmd] -> [Macro]
-macros = map toMacro . filter isMacro
+macros :: Prog -> [Macro]
+macros (Commands commands) = commands |> filter isMacro |> map toMacro
+
+-- | Pretty-print a MiniLogo program.
+--
+-- Given a Program, transforms the abstract syntax into well-formed concrete syntax.
+pretty :: Prog -> String
+pretty = undefined
