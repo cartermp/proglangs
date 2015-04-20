@@ -9,8 +9,7 @@ type Var = String
 type Macro = String
 
 -- prog ::= ε | cmd; prog
-data Prog = Commands [Cmd]
-    deriving (Eq, Show)
+type Prog = [Cmd]
 
 -- mode ::= down | up
 data Mode = Down
@@ -33,9 +32,6 @@ data Cmd = Pen Mode
          | Call Macro [Expr]
     deriving (Eq, Show)
 
-(|>) :: a -> (a -> b) -> b
-(|>) f g = g f
-
 -- | Draw a line from (x1,y1) to (x2,y2)
 --
 -- define line (x1, y1, x2, y2) {
@@ -50,7 +46,7 @@ linePos2 = Move (Var "x2") (Var "y2")
 
 line :: Cmd
 line = Define "line" ["x1", "y1", "x2", "y2"]
-    (Commands [Pen Up, linePos1, Pen Down, linePos2])
+    [Pen Up, linePos1, Pen Down, linePos2]
 
 -- | Use line macro to define MiniLogo macro nix (x,y,w,h)
 --
@@ -96,7 +92,7 @@ bottomRightCorner = center ++ [Pen Down, bottomRightCornerPos]
 
 nix :: Cmd
 nix = Define "nix" ["x", "y", "w", "h"]
-    (Commands (concat [topRightCorner, topLeftCorner, bottomLeftCorner, bottomRightCorner]))
+    (concat [topRightCorner, topLeftCorner, bottomLeftCorner, bottomRightCorner])
 
 -- | Define haskell function steps which produces a staircase from (0,0)
 --
@@ -107,8 +103,8 @@ stepsImpl n = (stepsImpl (n-1)) ++ [Move (Num 1) (Num 0), Move (Num 0) (Num 1)]
 
 steps :: Int -> Prog
 steps n = case n of
-          0 -> Commands [Pen Up, Move (Num 0) (Num 0)]
-          _ -> Commands (stepsImpl n)
+          0 -> [Pen Up, Move (Num 0) (Num 0)]
+          _ -> stepsImpl n
 
 -- | Define Haskell function macros which returns a list of used macro names
 --
@@ -123,7 +119,7 @@ toMacro :: Cmd -> Macro
 toMacro (Define macroName _ _) = macroName
 
 macros :: Prog -> [Macro]
-macros (Commands commands) = commands |> filter isMacro |> map toMacro
+macros = map toMacro . filter isMacro
 
 -- | Pretty-print a MiniLogo program.
 --
