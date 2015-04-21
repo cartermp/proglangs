@@ -1,6 +1,7 @@
 module HW2 where
 
 import Prelude
+import Data.List
 
 -- var ::= (any variable name)
 type Var = String
@@ -124,5 +125,25 @@ macros = map toMacro . filter isMacro
 -- | Pretty-print a MiniLogo program.
 --
 -- Given a Program, transforms the abstract syntax into well-formed concrete syntax.
+prettyPen :: Mode -> String
+prettyPen mode = case mode of
+                 Up -> "pen up"
+                 Down -> "pen down"
+
+prettyExpr :: Expr -> String
+prettyExpr expr = case expr of
+                  (Var var) -> var
+                  (Num num) -> show num
+                  (Add expr1 expr2) -> (prettyExpr expr1) ++ " + " ++ (prettyExpr expr2)
+
+prettyMove :: Expr -> Expr -> String
+prettyMove expr1 expr2 = "move(" ++ (prettyExpr expr1) ++ "," ++ (prettyExpr expr2) ++ ")"
+
+toPrettyString :: Cmd -> String
+toPrettyString cmd = case cmd of
+                     (Pen mode) -> prettyPen mode
+                     (Move expr1 expr2) -> prettyMove expr1 expr2
+                     (Define macro vars prog) -> "define"  ++ macro ++ (pretty prog)
+
 pretty :: Prog -> String
-pretty = undefined
+pretty = concat . map toPrettyString
