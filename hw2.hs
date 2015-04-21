@@ -146,4 +146,4 @@ toPrettyString cmd = case cmd of
                      (Define macro vars prog) -> "define"  ++ macro ++ (pretty prog)
 
 pretty :: Prog -> String
-pretty = concat . map toPrettyString
+pretty = concat . intersperse "; " . map toPrettyString
