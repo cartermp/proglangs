@@ -1,3 +1,6 @@
+-- Class cs381 | Spring 2015
+-- Author: Phillip Carter | 932-134-813
+
 module HW2 where
 
 import Prelude
