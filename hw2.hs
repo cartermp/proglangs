@@ -3,9 +3,6 @@ module HW2 where
 import Prelude
 import Data.List
 
--- var ::= (any variable name)
-type Var = String
-
 -- macro ::= (any macro name)
 type Macro = String
 
@@ -18,7 +15,7 @@ data Mode = Down
     deriving (Eq, Show)
 
 -- expr ::= var | num | expr + expr
-data Expr = Var Var
+data Expr = Var String
           | Num Int
           | Add Expr Expr
     deriving (Eq, Show)
@@ -29,7 +26,7 @@ data Expr = Var Var
 --       | call macro(expr*)
 data Cmd = Pen Mode
          | Move Expr Expr
-         | Define Macro [Var] Prog
+         | Define Macro [String] Prog
          | Call Macro [Expr]
     deriving (Eq, Show)
 
@@ -143,7 +140,7 @@ toPrettyString :: Cmd -> String
 toPrettyString cmd = case cmd of
                      (Pen mode) -> prettyPen mode
                      (Move expr1 expr2) -> prettyMove expr1 expr2
-                     (Define macro vars prog) -> "define"  ++ macro ++ (pretty prog)
+                     (Define macro vars prog) -> "define " ++ macro ++ " (" ++ ((concat . intersperse ", ") vars) ++  ") " ++ " {\n" ++ (pretty prog) ++ "\n}"
 
 pretty :: Prog -> String
-pretty = concat . intersperse "; " . map toPrettyString
+pretty = concat . intersperse "; \n" . map toPrettyString
