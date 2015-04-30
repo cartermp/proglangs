@@ -110,8 +110,17 @@ cmd (Add) stack    = case stack of
 --
 --   >>> prog [Pop,Dup] [5]
 --   Nothing
+progImpl :: Prog -> Maybe Stack -> Maybe Stack
+progImpl (c:p) Nothing = case c of
+                         (Push i) -> cmd c []
+                         _        -> Nothing 
+progImpl [] s = s
+progImpl (c:p) s = progImpl p (cmd c (fromJust s))
+
 prog :: Prog -> Stack -> Maybe Stack
-prog = undefined
+prog p [] = progImpl p Nothing
+prog [] s = Just s
+prog p stack = progImpl p (Just stack)
 
 
 -- | Evaluate a program starting with an empty stack.
