@@ -46,7 +46,7 @@ type Stack = [Int]
 --
 --   >>> cmd Dup [1,2,3]
 --   Just [1,1,2,3]
--- 
+--
 --   >>> cmd Swap [4,5,6]
 --   Just [5,4,6]
 --
@@ -111,20 +111,21 @@ cmd (Add) stack    = case stack of
 --   >>> prog [Pop,Dup] [5]
 --   Nothing
 progImpl :: Prog -> Maybe Stack -> Maybe Stack
+progImpl [] s          = s
 progImpl (c:p) Nothing = case c of
-                         (Push i) -> cmd c []
-                         _        -> Nothing 
-progImpl [] s = s
-progImpl (c:p) s = progImpl p (cmd c (fromJust s))
+                         (Push i) -> progImpl p (cmd c [])
+                         _        -> progImpl p Nothing
+progImpl (c:p) s       = progImpl p (cmd c (fromJust s))
 
 prog :: Prog -> Stack -> Maybe Stack
-prog p [] = progImpl p Nothing
-prog [] s = Just s
+prog [] s    = Just s
+prog p []    = progImpl p Nothing
 prog p stack = progImpl p (Just stack)
 
 
 -- | Evaluate a program starting with an empty stack.
-run = undefined
+run :: Prog -> Maybe Stack
+run p = prog p []
 
 
 --
@@ -192,7 +193,7 @@ xprog = undefined
 
 
 -- | Evaluate a program starting with an empty stack.
---   
+--
 --   >>> xrun [double,push 3,triple,Call "double"]
 --   Just [6]
 --
