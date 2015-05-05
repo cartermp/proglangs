@@ -187,7 +187,7 @@ xcmd :: XCmd -> State -> Maybe State
 xcmd (Define name xp) (m, s) = Just ((name, xp) : m, s)
 xcmd (Call name)      (m, s) = case result of
                                Just (_, xp)    -> xprog xp (m, s)
-                               Nothing         -> Just (m, s)
+                               Nothing         -> Nothing
                                where result = find (\x -> fst x == name) m
 xcmd (Basic c)        (m, s) = case result of
                                Just stack -> Just (m, stack)
