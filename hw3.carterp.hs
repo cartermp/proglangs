@@ -184,12 +184,27 @@ type State = (Macros,Stack)
 
 -- | Semantics of an extended command.
 xcmd :: XCmd -> State -> Maybe State
-xcmd = undefined
+xcmd (Define name xp) (m, s) = Just ((name, xp) : m, s)
+xcmd (Call name)      (m, s) = case result of
+                               Just (_, xp)    -> xprog xp (m, s)
+                               Nothing         -> Just (m, s)
+                               where result = find (\x -> fst x == name) m
+xcmd (Basic c)        (m, s) = case result of
+                               Just stack -> Just (m, stack)
+                               Nothing    -> Just (m, [])
+                               where result = cmd c s
 
 
 -- | Semantics of an extended program.
+xprogImpl :: XProg -> Maybe State -> Maybe State
+xprogImpl [] state         = state
+xprogImpl (xc:xcs) Nothing = xprogImpl xcs (xcmd xc ([], []))
+xprogImpl (xc:xcs) state   = xprogImpl xcs (xcmd xc (fromJust state))
+
+
 xprog :: XProg -> State -> Maybe State
-xprog = undefined
+xprog [] state = Just state
+xprog xp state = xprogImpl xp (Just state)
 
 
 -- | Evaluate a program starting with an empty stack.
@@ -207,4 +222,7 @@ xprog = undefined
 --   Nothing
 --
 xrun :: XProg -> Maybe Stack
-xrun = undefined
+xrun xp = case state of
+          Just (m, s) -> Just s
+          Nothing     -> Nothing
+          where state = xprog xp ([], [])
