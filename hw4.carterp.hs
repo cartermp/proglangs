@@ -48,9 +48,9 @@ draw p = let (_,ls) = prog p start in toHTML ls
 --
 cmd :: Cmd -> State -> (State, Maybe Line)
 cmd c (m, (px, py)) = case (c, m) of
-                         (Pen dir, _)     -> ((dir, (px, py)), Nothing)
-                         (Move x y, Down) -> ((m, (x,y)), Just ((px,py), (x,y)))
-                         (Move x y, Up)   -> ((m, (x,y)), Nothing)
+                        (Pen dir,  _)    -> ((dir, (px, py)), Nothing)
+                        (Move x y, Down) -> ((m, (x,y)), Just ((px,py), (x,y)))
+                        (Move x y, Up)   -> ((m, (x,y)), Nothing)
 
 
 -- | Semantic function for Prog.
@@ -62,14 +62,14 @@ cmd c (m, (px, py)) = case (c, m) of
 --   ((Down,(2,2)),[((0,0),(0,1)),((0,1),(1,1)),((1,1),(1,2)),((1,2),(2,2))])
 prog :: Prog -> State -> (State, [Line])
 prog [] s = (s, [])
-prog p s = progImpl p (s, [])
+prog p s  = progImpl p (s, [])
 
 progImpl :: Prog -> (State, [Line]) -> (State, [Line])
-progImpl [] (s, l)       = (s, reverse l)
+progImpl [] (s, l)        = (s, reverse l)
 progImpl (c:cmds) (s, ls) = case line of
                               Just l  -> progImpl cmds (res, l : ls)
                               Nothing -> progImpl cmds (res, ls)
-                           where (res, line) = cmd c s
+                            where (res, line) = cmd c s
 
 
 --
