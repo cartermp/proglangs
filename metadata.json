@@ -1,6 +1,6 @@
 {
     "concepts":["functional-programming"],
     "lang":"Haskell",
-    "title":"Programming Languages Programs",
+    "title":"Programming Languages",
     "description":"A collection of programs written for cs381 at OSU."
 }
